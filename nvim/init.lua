@@ -11,19 +11,6 @@ vim.g.mapleader = " "
 -- Plugins
 require("lazy").setup({
   { "doums/darcula", priority = 1000 },
-  -- Markdown
-  {
-    "MeanderingProgrammer/render-markdown.nvim",
-    dependencies = { "nvim-treesitter/nvim-treesitter" },
-    ft = { "markdown" },
-    opts = {},
-  },
-  {
-    "nvim-treesitter/nvim-treesitter",
-    build = ":TSUpdate",
-    opts = { ensure_installed = { "markdown", "markdown_inline" } },
-  },
-
   -- Git
   {
     "lewis6991/gitsigns.nvim",
