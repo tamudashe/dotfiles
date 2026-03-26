@@ -11,18 +11,50 @@ vim.g.mapleader = " "
 -- Plugins
 require("lazy").setup({
   { "doums/darcula", priority = 1000 },
+  -- Markdown
+  {
+    "MeanderingProgrammer/render-markdown.nvim",
+    dependencies = { "nvim-treesitter/nvim-treesitter" },
+    ft = { "markdown" },
+    opts = {},
+  },
+  {
+    "nvim-treesitter/nvim-treesitter",
+    build = ":TSUpdate",
+    opts = { ensure_installed = { "markdown", "markdown_inline" } },
+  },
+
+  -- Git
+  {
+    "lewis6991/gitsigns.nvim",
+    config = function()
+      require("gitsigns").setup({
+        on_attach = function(bufnr)
+          local gs = package.loaded.gitsigns
+          local map = function(mode, l, r) vim.keymap.set(mode, l, r, { buffer = bufnr }) end
+          map("n", "]c", gs.next_hunk)
+          map("n", "[c", gs.prev_hunk)
+          map("n", "<leader>hs", gs.stage_hunk)
+          map("n", "<leader>hr", gs.reset_hunk)
+          map("n", "<leader>hp", gs.preview_hunk)
+          map("n", "<leader>hb", gs.blame_line)
+        end,
+      })
+    end,
+  },
+
   -- LSP
   { "williamboman/mason.nvim", config = true },
   {
     "williamboman/mason-lspconfig.nvim",
-    opts = { ensure_installed = { "lua_ls", "gopls", "pyright", "ts_ls" } },
+    opts = { ensure_installed = { "lua_ls", "gopls", "pyright", "ts_ls", "jdtls" } },
   },
   {
     "neovim/nvim-lspconfig",
     config = function()
       local lspconfig = require("lspconfig")
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
-      for _, server in ipairs({ "lua_ls", "gopls", "pyright", "ts_ls" }) do
+      for _, server in ipairs({ "lua_ls", "gopls", "pyright", "ts_ls", "jdtls" }) do
         lspconfig[server].setup({ capabilities = capabilities })
       end
       vim.keymap.set("n", "gd", vim.lsp.buf.definition)
