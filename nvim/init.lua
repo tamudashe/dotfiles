@@ -52,11 +52,9 @@ require("lazy").setup({
   {
     "neovim/nvim-lspconfig",
     config = function()
-      local lspconfig = require("lspconfig")
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
-      for _, server in ipairs({ "lua_ls", "gopls", "pyright", "ts_ls", "jdtls" }) do
-        lspconfig[server].setup({ capabilities = capabilities })
-      end
+      vim.lsp.config("*", { capabilities = capabilities })
+      vim.lsp.enable({ "lua_ls", "gopls", "pyright", "ts_ls", "jdtls" })
       vim.keymap.set("n", "gd", vim.lsp.buf.definition)
       vim.keymap.set("n", "K", vim.lsp.buf.hover)
       vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename)
