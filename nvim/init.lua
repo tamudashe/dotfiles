@@ -1,6 +1,6 @@
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
   vim.fn.system({ "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git", lazypath })
 end
 vim.opt.rtp:prepend(lazypath)
@@ -8,9 +8,12 @@ vim.opt.rtp:prepend(lazypath)
 -- Leader (must be set before lazy)
 vim.g.mapleader = " "
 
+local servers = { "lua_ls", "gopls", "pyright", "ts_ls", "jdtls" }
+
 -- Plugins
 require("lazy").setup({
   { "doums/darcula", priority = 1000 },
+
   -- File tree
   {
     "nvim-neo-tree/neo-tree.nvim",
@@ -52,14 +55,15 @@ require("lazy").setup({
   { "williamboman/mason.nvim", config = true },
   {
     "williamboman/mason-lspconfig.nvim",
-    opts = { ensure_installed = { "lua_ls", "gopls", "pyright", "ts_ls", "jdtls" } },
+    opts = { ensure_installed = servers },
   },
   {
     "neovim/nvim-lspconfig",
+    dependencies = { "williamboman/mason-lspconfig.nvim" },
     config = function()
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
       vim.lsp.config("*", { capabilities = capabilities })
-      vim.lsp.enable({ "lua_ls", "gopls", "pyright", "ts_ls", "jdtls" })
+      vim.lsp.enable(servers)
       vim.keymap.set("n", "gd", vim.lsp.buf.definition)
       vim.keymap.set("n", "K", vim.lsp.buf.hover)
       vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename)
@@ -105,6 +109,7 @@ require("lazy").setup({
     end,
   },
 
+  -- Telescope
   {
     "nvim-telescope/telescope.nvim",
     dependencies = {
@@ -114,6 +119,10 @@ require("lazy").setup({
     config = function()
       require("telescope").setup({})
       require("telescope").load_extension("fzf")
+      vim.keymap.set("n", "<leader>ff", "<cmd>Telescope find_files<cr>")
+      vim.keymap.set("n", "<leader>fg", "<cmd>Telescope live_grep<cr>")
+      vim.keymap.set("n", "<leader>fb", "<cmd>Telescope buffers<cr>")
+      vim.keymap.set("n", "<leader>fh", "<cmd>Telescope help_tags<cr>")
     end,
   },
 })
@@ -128,17 +137,13 @@ vim.opt.termguicolors = true
 vim.opt.signcolumn = "yes"
 vim.opt.splitbelow = true
 vim.opt.splitright = true
+vim.opt.fillchars = { eob = " " }
 
 -- Theme
 vim.cmd.colorscheme("darcula")
-vim.opt.fillchars = { eob = " " }
 vim.api.nvim_set_hl(0, "SignColumn", { link = "Normal" })
 
 -- Keymaps
 vim.keymap.set("n", "<leader>w", "<cmd>w<cr>")
 vim.keymap.set("n", "<leader>q", "<cmd>q<cr>")
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<cr>")
-vim.keymap.set("n", "<leader>ff", "<cmd>Telescope find_files<cr>")
-vim.keymap.set("n", "<leader>fg", "<cmd>Telescope live_grep<cr>")
-vim.keymap.set("n", "<leader>fb", "<cmd>Telescope buffers<cr>")
-vim.keymap.set("n", "<leader>fh", "<cmd>Telescope help_tags<cr>")
