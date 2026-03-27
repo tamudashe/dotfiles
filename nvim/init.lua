@@ -14,6 +14,62 @@ local servers = { "lua_ls", "gopls", "pyright", "ts_ls", "jdtls" }
 require("lazy").setup({
   { "doums/darcula", priority = 1000 },
 
+  -- Treesitter
+  {
+    "nvim-treesitter/nvim-treesitter",
+    build = ":TSUpdate",
+    main = "nvim-treesitter.configs",
+    opts = {
+      ensure_installed = { "lua", "go", "python", "typescript", "javascript", "java", "html", "css", "json", "yaml", "bash" },
+      highlight = { enable = true },
+    },
+  },
+
+  -- Status line
+  {
+    "nvim-lualine/lualine.nvim",
+    opts = {
+      options = { icons_enabled = false, theme = "auto" },
+      sections = {
+        lualine_a = { "mode" },
+        lualine_b = { "branch" },
+        lualine_c = { "filename" },
+        lualine_x = { "filetype" },
+        lualine_y = {},
+        lualine_z = { "location" },
+      },
+    },
+  },
+
+  -- Formatting
+  {
+    "stevearc/conform.nvim",
+    config = function()
+      require("conform").setup({
+        formatters_by_ft = {
+          lua = { "stylua" },
+          go = { "gofmt" },
+          python = { "black" },
+          javascript = { "prettier" },
+          typescript = { "prettier" },
+          json = { "prettier" },
+          html = { "prettier" },
+          css = { "prettier" },
+        },
+        format_on_save = { timeout_ms = 500, lsp_format = "fallback" },
+      })
+    end,
+  },
+
+  -- Autopairs
+  { "windwp/nvim-autopairs", event = "InsertEnter", opts = {} },
+
+  -- Which-key
+  { "folke/which-key.nvim", opts = {} },
+
+  -- Surround
+  { "kylechui/nvim-surround", event = "VeryLazy", opts = {} },
+
   -- File tree
   {
     "nvim-neo-tree/neo-tree.nvim",
