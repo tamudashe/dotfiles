@@ -131,6 +131,7 @@ vim.opt.splitright = true
 
 -- Theme
 vim.cmd.colorscheme("darcula")
+vim.api.nvim_set_hl(0, "SignColumn", { link = "Normal" })
 
 -- Keymaps
 vim.keymap.set("n", "<leader>w", "<cmd>w<cr>")
